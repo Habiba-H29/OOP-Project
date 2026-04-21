@@ -15,9 +15,28 @@
         }
         public void UpadateStock(int amount) 
         {
-            Quantity += amount;
+            int nextQuantity = Quantity + amount;
+            //Validates that the new quantity won't be negative before updating 
+            if (nextQuantity <0)
+            {
+                throw new InvalidOperationException("Stock can't be negative!");
+            }
+            Quantity = nextQuantity;
+
+            if (Quantity == 0)
+            {
+                Status = ProductStatus.OutOfStock;
+            }
+            else if (IsLowStock())
+            {
+                Status = ProductStatus.LowStock;
+            }
+            else
+            {
+                Status = ProductStatus.InStock;
+            }
         }
-        //Checks if the product is running low on stock
-        public bool IsLowStock() => Quantity < 5;
+        //Defines the condition for a "Low Stock" alert
+        public bool IsLowStock() => Quantity > 0 && Quantity < 5;
     }
 }

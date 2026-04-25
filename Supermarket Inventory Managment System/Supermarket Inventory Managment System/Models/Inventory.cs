@@ -31,6 +31,50 @@ namespace Supermarket_Inventory_Managment_System.Models
             Products[lastIndex] = product;
             SaveProductsToFile();
         }
+        //Returns the total number of products in the inventory
+        public int GetTotalProductsCount() 
+        {
+            int count = 0;
+            for(int i = 0; i < Products.Length; i++)
+            {
+                if (Products[i] != null)
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
+        //Calculates the total value of all products in stock 
+        public double GetTotalStockValue()
+        {
+            double totalValue = 0;
+            for (int i =0;i < Products.Length;i++)
+            {
+                if (Products[i] != null)
+                {
+                    totalValue += (Products[i].Price * Products[i].Quantity);
+                }
+            }
+            return totalValue;
+        }
+        //Provides a summary of products grouped by their types
+        public string GetProductTypesSummary()
+        {
+            int perishable = 0;
+            int nonPerishable = 0;
+            for (int i = 0; i < Products.Length;i++)
+            {
+                if (Products[i] is PerishableProduct)
+                {
+                    perishable++;
+                }
+                else if (Products[i] is NonPerishableProduct)
+                {
+                    nonPerishable++;
+                }
+            }
+            return $"Perishable:{perishable},Non-Perishable:{nonPerishable}";
+        }
 
         public void UpdateProduct(Product updatedProduct)
         {

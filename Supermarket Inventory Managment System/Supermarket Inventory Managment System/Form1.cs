@@ -6,6 +6,9 @@ namespace Supermarket_Inventory_Managment_System
 {
     public partial class Form1 : Form
     {
+        private Label lblTotalProducts = null!;
+        private Label lblTotalValue = null!;
+        private Label lblTypeSummary = null!;
         private readonly Inventory _inventory = new(500);
         private readonly TabControl _tabs = new() { Dock = DockStyle.Fill};
         private readonly DataGridView _products = new() { 
@@ -34,6 +37,7 @@ namespace Supermarket_Inventory_Managment_System
         {
             _inventory.LoadProductsFromFile();
             BindProductsGrid();
+            BuildInsightsTab();
             if (_inventory.Products[0] != null)
             {
                 MessageBox.Show($"Successfully loaded {_inventory.Products} products.");
@@ -196,10 +200,54 @@ namespace Supermarket_Inventory_Managment_System
 
             _tabs.TabPages.Add(tab);
         }
+        private void BuildInsightsTab()
+        {
+            TabPage insightsTab = new TabPage("Inventory Insights"); 
+
+            lblTotalProducts = new Label
+            {
+                Text = "Total Products:0",
+                Location = new Point(20, 20),
+                AutoSize = true,
+                Font = new Font("Arial", 12, FontStyle.Bold)
+            };
+            lblTotalValue = new Label
+            {
+                Text = "Stock Value:$0",
+                Location = new Point(20, 60),
+                AutoSize = true,
+                Font = new Font("Arial", 12, FontStyle.Bold)
+            };
+            lblTypeSummary = new Label
+            {
+                Text = "Summary:",
+                Location = new Point(20, 100),
+                AutoSize = true,
+                Font = new Font("Arial", 12, FontStyle.Bold)
+            };
+
+            insightsTab.Controls.Add(lblTotalProducts);
+            insightsTab.Controls.Add(lblTotalValue);
+            insightsTab.Controls.Add(lblTypeSummary);
+            _tabs.TabPages.Add(insightsTab);
+            _tabs.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
+
+
+        }
 
         private void BuildReportsTab()
         {
             // Will include reports like: total_products, total_stock_value, etc
+        }
+        //Updates inventory statistics whenever the insights tab is selected
+        private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(_tabs.SelectedIndex ==2)
+            {
+                lblTotalProducts.Text = "Total Products:" + _inventory.GetTotalProductsCount();
+                lblTotalValue.Text = "Stock Value: $" + _inventory.GetTotalStockValue().ToString("N2");
+                lblTypeSummary.Text = _inventory.GetProductTypesSummary();
+            }
         }
     }
 }

@@ -2,7 +2,15 @@
 {
     public abstract class Product
     {
-        // Constructor is protected to prevent direct instantiation of the abstract class, but allows derived classes to initialize properties
+        private static int _nextProductId = 1;
+
+        // Auto-assign ProductID
+        protected Product(string name, double price, int quantity, Category category)
+            : this(_nextProductId++, name, price, quantity, category)
+        {
+        }
+
+        // Constructor with explicit ProductID (used for loading existing products)
         protected Product(int productID, string name, double price, int quantity, Category category)
         {
             ProductID = productID;
@@ -11,9 +19,14 @@
             Quantity = quantity;
             Category = category;
             Status = quantity == 0 ? ProductStatus.OutOfStock : ProductStatus.InStock;
+
+            if (productID >= _nextProductId)
+            {
+                _nextProductId = productID + 1;
+            }
         }
 
-        public int ProductID { get; set; }
+        public int ProductID { get; private set; }
         public string Name { get; set; } = string.Empty;
         public double Price { get; set; }
         public int Quantity { get; set; }
@@ -23,7 +36,7 @@
         public ProductStatus Status { get; set; }
         public virtual string GetDetails()
         {
-            return $"ID:{ProductID},Name:{Name},Price:{Price}";
+            return $"ID:{ProductID}|Name:{Name}|Price:{Price}";
         }
         public void UpdateStock(int amount)
         {

@@ -19,6 +19,7 @@ namespace Supermarket_Inventory_Managment_System
             SelectionMode = DataGridViewSelectionMode.FullRowSelect,
             MultiSelect = false,
         };
+        private readonly TextBox _inventorySearchBox = new() { Width = 260 };
 
         public Form1()
         {
@@ -53,7 +54,6 @@ namespace Supermarket_Inventory_Managment_System
             TabPage tab = new TabPage("Inventory");
             TableLayoutPanel root = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 1, RowCount = 2 };
             FlowLayoutPanel toolBar = new FlowLayoutPanel { Dock = DockStyle.Fill, Padding = new Padding(8) };
-            DataGridView dataDisplay = new DataGridView();
 
             Button addBtn = new Button { Text = "Add", BackColor = Color.FromName("green"), Width = 100, Height = 50 };
             addBtn.Click += (s, e) =>
@@ -64,7 +64,7 @@ namespace Supermarket_Inventory_Managment_System
                 {
                     // Gets CreatedProduct from "AddProductForm" and adds it to the inventory
                     _inventory.AddToProducts(newProduct);
-                    BindProductsGrid();
+                    ApplyInventorySearch();
                 }
             };
             Button editBtn = new Button { Text = "Edit", BackColor = Color.FromName("blue"), Width = 100, Height = 50 };
@@ -81,7 +81,7 @@ namespace Supermarket_Inventory_Managment_System
                 if (editForm.ShowDialog() == DialogResult.OK && editForm.CreatedProduct is Product updatedProduct)
                 {
                     _inventory.UpdateProduct(updatedProduct);
-                    BindProductsGrid();
+                    ApplyInventorySearch();
                 }
             };
 
@@ -95,7 +95,7 @@ namespace Supermarket_Inventory_Managment_System
                     if (confirmResult == DialogResult.Yes)
                     {
                         _inventory.RemoveFromProducts(selectedProduct.ProductID);
-                        BindProductsGrid();
+                        ApplyInventorySearch();
                     }
                 }
                 else
@@ -104,9 +104,24 @@ namespace Supermarket_Inventory_Managment_System
                 }
             };
 
+            Label searchLabel = new Label
+            {
+                Text = "Search",
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleLeft,
+                Padding = new Padding(12, 15, 0, 0)
+            };
+
+            _inventorySearchBox.Height = 30;
+            _inventorySearchBox.Margin = new Padding(8, 12, 0, 0);
+            _inventorySearchBox.PlaceholderText = "Type product name...";
+            _inventorySearchBox.TextChanged += (_, _) => ApplyInventorySearch();
+
             toolBar.Controls.Add(addBtn);
             toolBar.Controls.Add(deleteBtn);
             toolBar.Controls.Add(editBtn);
+            toolBar.Controls.Add(searchLabel);
+            toolBar.Controls.Add(_inventorySearchBox);
 
             Debug.WriteLine(_inventory.Products);
 
@@ -119,11 +134,18 @@ namespace Supermarket_Inventory_Managment_System
 
         }
 
+        private void ApplyInventorySearch()
+        {
+            string searchTerm = _inventorySearchBox.Text;
+            Product[] filtered = _inventory.SearchByName(searchTerm);
+            BindProductsGrid(filtered);
+        }
+
         // Removes null values from getting rendered into the table
-        private void BindProductsGrid()
+        private void BindProductsGrid(IEnumerable<Product>? products = null)
         {
             _products.DataSource = null;
-            _products.DataSource = _inventory.Products.OfType<Product>().ToList();
+            _products.DataSource = (products ?? _inventory.Products.OfType<Product>()).ToList();
         }
 
         private Product? GetSelectedProduct()

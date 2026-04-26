@@ -139,10 +139,31 @@ namespace Supermarket_Inventory_Managment_System.Models
             return Products.Where(p => p != null && p.IsLowStock()).ToArray();
         }
 
-        public Product SearchByName(string name)
+        public Product[] SearchByName(string name)
         {
-            // Will be implemented later.
-            return null;
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return Products.OfType<Product>().ToArray();
+            }
+
+            string searchTerm = name.Trim();
+            List<Product> matches = new();
+
+            for (int i = 0; i < Products.Length; i++)
+            {
+                Product? current = Products[i];
+                if (current == null)
+                {
+                    continue;
+                }
+
+                if (current.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                {
+                    matches.Add(current);
+                }
+            }
+
+            return matches.ToArray();
         }
 
         public void LoadProductsFromFile()

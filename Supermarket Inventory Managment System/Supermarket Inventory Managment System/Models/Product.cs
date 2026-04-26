@@ -34,6 +34,8 @@
         // Here we will use the Enums we defined earlier
         public Category Category { get; set; }
         public ProductStatus Status { get; set; }
+        public string Details => GetDetails();
+
         public virtual string GetDetails()
         {
             return $"ID:{ProductID}|Name:{Name}|Price:{Price}";

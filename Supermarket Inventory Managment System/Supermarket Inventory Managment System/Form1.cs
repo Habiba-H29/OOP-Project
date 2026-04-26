@@ -42,14 +42,6 @@ namespace Supermarket_Inventory_Managment_System
             _inventory.LoadProductsFromFile();
             BindProductsGrid();
             BuildInsightsTab();
-            if (_inventory.Products[0] != null)
-            {
-                MessageBox.Show($"Successfully loaded {_inventory.Products} products.");
-            }
-            else
-            {
-                MessageBox.Show("Warning: Inventory Products collection is null or empty after loading.");
-            }
         }
 
         private void BuildInventoryTab()
@@ -149,6 +141,12 @@ namespace Supermarket_Inventory_Managment_System
         {
             _products.DataSource = null;
             _products.DataSource = (products ?? _inventory.Products.OfType<Product>()).ToList();
+
+            if (_products.Columns["Details"] is DataGridViewColumn detailsColumn)
+            {
+                detailsColumn.Width = 320;
+                detailsColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            }
         }
 
         private Product? GetSelectedProduct()

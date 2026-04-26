@@ -22,10 +22,10 @@
         // Barcode for scanning
         public string Barcode { get; set; } = string.Empty;
 
-        // Return + shelf life details
+        // Return only non-perishable specific details
         public override string GetDetails()
         {
-            return base.GetDetails() + $"|Shelf Life: {ShelfLifeMonths} months|Barcode: {Barcode}";
+            return $"Shelf Life: {ShelfLifeMonths} months|Barcode: {Barcode}";
         }
     }
 }

@@ -164,25 +164,30 @@ namespace Supermarket_Inventory_Managment_System
         private void BuildDashboardTab()
         {
             TabPage tab = new TabPage("Dashboard");
+
             TableLayoutPanel root = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 ColumnCount = 1,
-                RowCount = 3,
-                Padding = new Padding(20)
+                RowCount = 5,
+                Padding = new Padding(20),
+                BackColor = Color.Gainsboro
             };
 
-            root.RowStyles.Add(new RowStyle(SizeType.Percent, 40));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            root.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            root.RowStyles.Add(new RowStyle(SizeType.Percent, 100f)); // Takes up the remaining space to push everything up
 
             Label header = new()
             {
                 Text = "Welcome to the Supermarket Inventory Management System",
-                Font = new Font("Arial", 24, FontStyle.Bold),
+                Font = new Font("Arial", 16, FontStyle.Bold),
                 AutoSize = true,
-                Anchor = AnchorStyles.None,
-                TextAlign = ContentAlignment.MiddleCenter
+                TextAlign = ContentAlignment.MiddleLeft,
+                Dock = DockStyle.Fill,
+                Margin = new Padding(0, 0, 0, 12)
             };
 
             Label subText = new()
@@ -190,19 +195,22 @@ namespace Supermarket_Inventory_Managment_System
                 Text = "Manage products, track stock, and keep your inventory up to date.",
                 Font = new Font("Arial", 12, FontStyle.Regular),
                 AutoSize = true,
-                Anchor = AnchorStyles.None,
-                TextAlign = ContentAlignment.MiddleCenter
+                TextAlign = ContentAlignment.MiddleLeft,
+                Dock = DockStyle.Fill,
+                Margin = new Padding(0, 0, 0, 20)
             };
 
             Button goToInventoryBtn = new Button
             {
                 Text = "Go to Inventory",
-                Width = 180,
-                Height = 45,
-                Anchor = AnchorStyles.None,
+                Width = 220,
+                Height = 55,
+                Font = new Font("Arial", 11, FontStyle.Bold),
                 BackColor = Color.FromArgb(52, 152, 219),
                 ForeColor = Color.White,
-                FlatStyle = FlatStyle.Flat
+                FlatStyle = FlatStyle.Flat,
+                Anchor = AnchorStyles.Left,
+                Margin = new Padding(0, 0, 0, 15)
             };
 
             goToInventoryBtn.Click += (s, e) =>
@@ -217,12 +225,37 @@ namespace Supermarket_Inventory_Managment_System
                 }
             };
 
+            Button goToInsightsBtn = new Button
+            {
+                Text = "Go to Insights",
+                Width = 220,
+                Height = 55,
+                Font = new Font("Arial", 11, FontStyle.Bold),
+                BackColor = Color.FromArgb(46, 204, 113),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Anchor = AnchorStyles.Left,
+                Margin = new Padding(0)
+            };
+
+            goToInsightsBtn.Click += (s, e) =>
+            {
+                TabPage? insightsTab = _tabs.TabPages
+                    .Cast<TabPage>()
+                    .FirstOrDefault(t => t.Text == "Inventory Insights");
+
+                if (insightsTab != null)
+                {
+                    _tabs.SelectedTab = insightsTab;
+                }
+            };
+
             root.Controls.Add(header, 0, 0);
             root.Controls.Add(subText, 0, 1);
             root.Controls.Add(goToInventoryBtn, 0, 2);
+            root.Controls.Add(goToInsightsBtn, 0, 3);
 
             tab.Controls.Add(root);
-
             _tabs.TabPages.Add(tab);
         }
         private void BuildInsightsTab()

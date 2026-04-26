@@ -20,10 +20,10 @@
         public string ExpiryDate { get; set; } = string.Empty;
         public string StorageTemp { get; set; } = string.Empty;
 
-        // To include expiration date information
+        // To include only perishable-specific information
         public override string GetDetails()
         {
-            return base.GetDetails() + $"|Expiry:{ExpiryDate}";
+            return $"Expiry: {ExpiryDate}|Storage Temp: {StorageTemp}";
         }
         public bool IsExpired()
         {

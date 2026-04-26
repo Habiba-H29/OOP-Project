@@ -349,11 +349,6 @@ namespace Supermarket_Inventory_Managment_System
             return card;
         }
 
-        private void BuildReportsTab()
-        {
-            // Will include reports like: total_products, total_stock_value, etc
-        }
-
         //Updates inventory statistics whenever the insights tab is selected
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {

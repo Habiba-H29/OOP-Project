@@ -1,7 +1,7 @@
 ﻿namespace Supermarket_Inventory_Managment_System.Models
 {
     // Inherits from Product class
-    public class NonPerishableProduct : Product
+    public sealed class NonPerishableProduct : Product
     {
         public NonPerishableProduct(string name, double price, int quantity, Category category, int shelfLifeMonths, string barcode)
             : base(name, price, quantity, category)

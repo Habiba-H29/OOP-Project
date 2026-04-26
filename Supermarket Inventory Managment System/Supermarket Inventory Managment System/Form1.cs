@@ -9,6 +9,9 @@ namespace Supermarket_Inventory_Managment_System
         private Label lblTotalProducts = null!;
         private Label lblTotalValue = null!;
         private Label lblTypeSummary = null!;
+        private Label lblLowStock = null!;
+        private DataGridView _insightsTopProducts = null!;
+        private TabPage? _insightsTab;
         private readonly Inventory _inventory = new(500);
         private readonly TabControl _tabs = new() { Dock = DockStyle.Fill};
         private readonly DataGridView _products = new() { 
@@ -224,51 +227,117 @@ namespace Supermarket_Inventory_Managment_System
         }
         private void BuildInsightsTab()
         {
-            TabPage insightsTab = new TabPage("Inventory Insights"); 
+            _insightsTab = new TabPage("Inventory Insights");
 
-            lblTotalProducts = new Label
+            TableLayoutPanel root = new TableLayoutPanel
             {
-                Text = "Total Products:0",
-                Location = new Point(20, 20),
-                AutoSize = true,
-                Font = new Font("Arial", 12, FontStyle.Bold)
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 2,
+                Padding = new Padding(12)
             };
-            lblTotalValue = new Label
+            root.RowStyles.Add(new RowStyle(SizeType.Percent, 35));
+            root.RowStyles.Add(new RowStyle(SizeType.Percent, 65));
+
+            TableLayoutPanel metricsRow = new TableLayoutPanel
             {
-                Text = "Stock Value:$0",
-                Location = new Point(20, 60),
-                AutoSize = true,
-                Font = new Font("Arial", 12, FontStyle.Bold)
-            };
-            lblTypeSummary = new Label
-            {
-                Text = "Summary:",
-                Location = new Point(20, 100),
-                AutoSize = true,
-                Font = new Font("Arial", 12, FontStyle.Bold)
+                Dock = DockStyle.Fill,
+                ColumnCount = 4,
+                RowCount = 1,
+                Padding = new Padding(0, 0, 0, 8)
             };
 
-            insightsTab.Controls.Add(lblTotalProducts);
-            insightsTab.Controls.Add(lblTotalValue);
-            insightsTab.Controls.Add(lblTypeSummary);
-            _tabs.TabPages.Add(insightsTab);
+            for (int i = 0; i < 4; i++)
+            {
+                metricsRow.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25f));
+            }
+
+            metricsRow.Controls.Add(CreateMetricCard("Total Products", Color.FromArgb(41, 128, 185), out lblTotalProducts), 0, 0);
+            metricsRow.Controls.Add(CreateMetricCard("Stock Value", Color.FromArgb(39, 174, 96), out lblTotalValue), 1, 0);
+            metricsRow.Controls.Add(CreateMetricCard("Summary", Color.FromArgb(142, 68, 173), out lblTypeSummary), 2, 0);
+            metricsRow.Controls.Add(CreateMetricCard("Low Stock Items", Color.FromArgb(211, 84, 0), out lblLowStock), 3, 0);
+
+            _insightsTopProducts = new DataGridView
+            {
+                Dock = DockStyle.Fill,
+                ReadOnly = true,
+                AutoGenerateColumns = true,
+                AllowUserToAddRows = false,
+                SelectionMode = DataGridViewSelectionMode.FullRowSelect,
+                MultiSelect = false
+            };
+
+            GroupBox productsBox = new GroupBox
+            {
+                Text = "Top 10 Products",
+                Dock = DockStyle.Fill,
+                Font = new Font("Arial", 10, FontStyle.Bold)
+            };
+            productsBox.Controls.Add(_insightsTopProducts);
+
+            root.Controls.Add(metricsRow, 0, 0);
+            root.Controls.Add(productsBox, 0, 1);
+
+            _insightsTab.Controls.Add(root);
+            _tabs.TabPages.Add(_insightsTab);
             _tabs.SelectedIndexChanged += tabControl1_SelectedIndexChanged;
+        }
 
+        private Panel CreateMetricCard(string title, Color backColor, out Label valueLabel)
+        {
+            Panel card = new Panel
+            {
+                Dock = DockStyle.Fill,
+                BackColor = backColor,
+                Margin = new Padding(6)
+            };
 
+            Label titleLabel = new Label
+            {
+                Text = title,
+                Dock = DockStyle.Top,
+                Height = 32,
+                ForeColor = Color.White,
+                Font = new Font("Arial", 10, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            valueLabel = new Label
+            {
+                Text = "0",
+                Dock = DockStyle.Fill,
+                ForeColor = Color.White,
+                Font = new Font("Arial", 18, FontStyle.Bold),
+                TextAlign = ContentAlignment.MiddleCenter
+            };
+
+            card.Controls.Add(valueLabel);
+            card.Controls.Add(titleLabel);
+            return card;
         }
 
         private void BuildReportsTab()
         {
             // Will include reports like: total_products, total_stock_value, etc
         }
+
         //Updates inventory statistics whenever the insights tab is selected
         private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(_tabs.SelectedIndex ==2)
+            if (_tabs.SelectedTab == _insightsTab)
             {
                 lblTotalProducts.Text = "Total Products:" + _inventory.GetTotalProductsCount();
                 lblTotalValue.Text = "Stock Value: $" + _inventory.GetTotalStockValue().ToString("N2");
                 lblTypeSummary.Text = _inventory.GetProductTypesSummary();
+                lblLowStock.Text = "Low Stock Items:" + _inventory.GetLowStockItems().Length;
+
+                Product[] allProducts = _inventory.Products.OfType<Product>().ToArray();
+                _insightsTopProducts.DataSource = null;
+                _insightsTopProducts.DataSource = allProducts
+                    .OrderByDescending(p => p.Quantity)
+                    .Take(10)
+                    .ToList();
             }
         }
     }

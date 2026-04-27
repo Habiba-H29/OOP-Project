@@ -18,7 +18,7 @@
             Price = price;
             Quantity = quantity;
             Category = category;
-            Status = quantity == 0 ? ProductStatus.OutOfStock : ProductStatus.InStock;
+            Status = getProductStatus(quantity);
 
             if (productID >= _nextProductId)
             {

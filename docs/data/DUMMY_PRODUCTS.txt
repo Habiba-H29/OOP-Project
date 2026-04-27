@@ -1,0 +1,12 @@
+P|1|Whole Milk 1L|Dairy|3.49|24|5/10/2026|4
+P|2|Cheddar Cheese|Dairy|5.99|12|6/1/2026|4
+P|3|Greek Yogurt|Dairy|2.29|30|5/6/2026|4
+P|4|Bananas|Produce|1.19|60|5/2/2026|12
+P|5|Romaine Lettuce|Produce|1.89|18|5/1/2026|5
+P|6|Frozen Peas 500g|Frozen|2.75|40|10/30/2026|-18
+N|7|Spaghetti 500g|Bakery|1.99|50|24|880012341234
+N|8|Bottled Water 1.5L|Beverages|0.89|120|18|880012341235
+N|9|Cola Can 330ml|Beverages|1.25|96|12|880012341236
+N|10|Dish Soap 750ml|Household|3.79|28|36|880012341237
+N|11|Potato Chips Salted|Snacks|2.49|44|8|880012341238
+N|12|All Purpose Flour 1kg|Bakery|1.69|35|12|880012341239
